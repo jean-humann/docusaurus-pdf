@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import console_stamp from 'console-stamp';
 import * as puppeteer from 'puppeteer-core';
-import { scrollPageToBottom } from 'puppeteer-autoscroll-down';
 import * as fs from 'fs-extra';
 import { chromeExecPath } from './browser';
 import * as utils from './utils';
@@ -66,7 +65,7 @@ export async function generatePDF({
   const execPath = process.env.PUPPETEER_EXECUTABLE_PATH ?? chromeExecPath();
   console.debug(chalk.cyan(`Using Chromium from ${execPath}`));
   const browser = await puppeteer.launch({
-    headless: 'new',
+    headless: true,
     executablePath: execPath,
     args: puppeteerArgs,
     protocolTimeout: protocolTimeout,
@@ -184,6 +183,8 @@ export async function generatePDF({
   // Scroll to the bottom of the page with puppeteer-autoscroll-down
   // This forces lazy-loading images to load
   console.log(chalk.cyan('Scroll to the bottom of the page...'));
+
+  const { scrollPageToBottom } = await import('puppeteer-autoscroll-down');
   await scrollPageToBottom(page, {}); //cast to puppeteer-core type
 
   // Generate PDF
